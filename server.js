@@ -87,7 +87,7 @@ io.on('connection', socket => {
 
         users.push(user);
 
-        socket.emit('user.connect', users);
+        io.emit('user.connect', users);
     });
     socket.on('message.chat1', data => {
         messages['chat1'].push(data);
