@@ -80,6 +80,17 @@ io.on('connection', socket => {
 
     socket.on('pseudo', data => {
         //messages["chat1"].push(data);
+
+        var found = containIdSocket(socket.id);
+
+        if (found) return;
+
+        var userFound = userExists(data);
+        if (userFound) {
+            socket.emit('pseudo.error');
+            return;
+        }
+
         const user = {
             pseudo: data,
             id: socket.id,
@@ -112,6 +123,18 @@ io.on('connection', socket => {
         socket.broadcast.emit('user.connect', users);
     });
 });
+
+function userExists(username) {
+    return users.some(function (el) {
+        return el.pseudo === username;
+    });
+}
+
+function containIdSocket(socketId) {
+    return users.some(function (el) {
+        return el.id === socketId;
+    });
+}
 
 // on change app par server
 server.listen(port, function () {
