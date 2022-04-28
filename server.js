@@ -1,46 +1,3 @@
-/*const app = require("express")();
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
-const next = require("next");
-
-const port = parseInt(process.env.PORT, 10) || 3001;
-const dev = process.env.NODE_ENV !== "production";
-const nextApp = next({ dev });
-const nextHandler = nextApp.getRequestHandler();
-
-// fake DB
-const messages = {
-  chat1: [],
-  chat2: [],
-};
-
-// socket.io server
-io.on("connection", (socket) => {
-  socket.on("message.chat1", (data) => {
-    messages["chat1"].push(data);
-    socket.broadcast.emit("message.chat1", data);
-  });
-  socket.on("message.chat2", (data) => {
-    messages["chat2"].push(data);
-    socket.broadcast.emit("message.chat2", data);
-  });
-});
-
-nextApp.prepare().then(() => {
-  app.get("/messages/:chat", (req, res) => {
-    res.json(messages[req.params.chat]);
-  });
-
-  app.get("*", (req, res) => {
-    return nextHandler(req, res);
-  });
-
-  server.listen(port, (err) => {
-    if (err) throw err;
-    console.log(`> Ready on http://localhost:${port}`);
-  });
-});*/
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const port = parseInt(process.env.PORT, 10) || 3001;
@@ -67,7 +24,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('public'));
 app.get('/', function (req, res) {
-    res.sendFile('index.html', {root: __dirname});
+    //res.sendFile('index.html', {root: __dirname});
+    res.redirect('http://localhost:3000');
 });
 
 app.get('/json', function (req, res) {
@@ -99,6 +57,10 @@ io.on('connection', socket => {
         users.push(user);
 
         io.emit('user.connect', users);
+    });
+    socket.on('message', data => {
+        messages[data.room].push(data);
+        socket.broadcast.emit('message', data);
     });
     socket.on('message.chat1', data => {
         messages['chat1'].push(data);

@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model channel {
+  id     Int    @id @default(autoincrement())
+  uuid   String @unique(map: "Channel_uuid_key")
+  name   String
+  userId Int?
+  user   user?  @relation(fields: [userId], references: [id], map: "Channel_userId_fkey")
+  room   room[]
+
+  @@index([userId], map: "Channel_userId_fkey")
+}
+
+model room {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique(map: "Room_uuid_key")
+  name      String
+  channelId Int?
+  channel   channel? @relation(fields: [channelId], references: [id], map: "Room_channelId_fkey")
+
+  @@index([channelId], map: "Room_channelId_fkey")
+}
+
+model user {
+  id      Int       @id @default(autoincrement())
+  uuid    String    @unique(map: "User_uuid_key")
+  pseudo  String
+  email   String
+  channel channel[]
+}
